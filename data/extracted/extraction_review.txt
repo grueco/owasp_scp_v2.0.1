@@ -1,0 +1,669 @@
+OWASP Secure Coding Practices Extraction Review
+================================================
+
+Source PDF: owasp_scp_v2.0.1.pdf
+Version: 2.0.1
+Date: December 2022
+Checklist start page: 5
+Total practices: 214
+
+Practices by category:
+Input Validation: 16
+Output Encoding: 6
+Authentication and Password Management: 35
+Session Management: 19
+Access Control: 24
+Cryptographic Practices: 6
+Error Handling and Logging: 24
+Data Protection: 12
+Communication Security: 8
+System Configuration: 16
+Database Security: 13
+File Management: 14
+Memory Management: 9
+General Coding Practices: 12
+
+Extracted practices:
+
+SCP-IV-001 | Input Validation | Page 5
+Conduct all data validation on a trusted system (e.g., The server)
+
+SCP-IV-002 | Input Validation | Page 5
+Identify all data sources and classify them into trusted and untrusted. Validate all data from untrusted sources (e.g., Databases, file streams, etc.)
+
+SCP-IV-003 | Input Validation | Page 5
+There should be a centralized input validation routine for the application
+
+SCP-IV-004 | Input Validation | Page 5
+Specify proper character sets, such as UTF-8, for all sources of input
+
+SCP-IV-005 | Input Validation | Page 5
+Encode data to a common character set before validating (Canonicalize)
+
+SCP-IV-006 | Input Validation | Page 5
+All validation failures should result in input rejection
+
+SCP-IV-007 | Input Validation | Page 5
+Determine if the system supports UTF-8 extended character sets and if so, validate after UTF-8 decoding is completed
+
+SCP-IV-008 | Input Validation | Page 5
+Validate all client provided data before processing, including all parameters, URLs and HTTP header content (e.g. Cookie names and values). Be sure to include automated post backs from JavaScript, Flash or other embedded code
+
+SCP-IV-009 | Input Validation | Page 5
+Verify that header values in both requests and responses contain only ASCII characters
+
+SCP-IV-010 | Input Validation | Page 5
+Validate data from redirects (An attacker may submit malicious content directly to the target of the redirect, thus circumventing application logic and any validation performed before the redirect)
+
+SCP-IV-011 | Input Validation | Page 5
+Validate for expected data types
+
+SCP-IV-012 | Input Validation | Page 5
+Validate data range
+
+SCP-IV-013 | Input Validation | Page 5
+Validate data length
+
+SCP-IV-014 | Input Validation | Page 5
+Validate all input against a "white" list of allowed characters, whenever possible
+
+SCP-IV-015 | Input Validation | Page 5
+If any potentially hazardous characters must be allowed as input, be sure that you implement additional controls like output encoding, secure task specific APIs and accounting for the utilization of that data throughout the application . Examples of common hazardous characters include: < > " ' % ( ) & + \ \' \"
+
+SCP-IV-016 | Input Validation | Page 5
+If your standard validation routine cannot address the following inputs, then they should be checked discretely – Check for null bytes (%00) – Check for new line characters (%0d, %0a, \r, \n) – Check for “dot-dot-slash" (../ or ..\) path alterations characters. In cases where UTF-8 extended character set encoding is supported, address alternate representation like: %c0%ae%c0%ae/ (Utilize canonicalization to address double encoding or other forms of obfuscation attacks)
+
+SCP-OE-001 | Output Encoding | Page 5
+Conduct all encoding on a trusted system (e.g., The server)
+
+SCP-OE-002 | Output Encoding | Page 5
+Utilize a standard, tested routine for each type of outbound encoding
+
+SCP-OE-003 | Output Encoding | Page 5
+Contextually output encode all data returned to the client that originated outside the application's trust boundary. HTML entity encoding is one example, but does not work in all cases
+
+SCP-OE-004 | Output Encoding | Page 5
+Encode all characters unless they are known to be safe for the intended interpreter
+
+SCP-OE-005 | Output Encoding | Page 5
+Contextually sanitize all output of un-trusted data to queries for SQL, XML, and LDAP
+
+SCP-OE-006 | Output Encoding | Page 5
+Sanitize all output of un-trusted data to operating system commands
+
+SCP-AP-001 | Authentication and Password Management | Page 6
+Require authentication for all pages and resources, except those specifically intended to be public
+
+SCP-AP-002 | Authentication and Password Management | Page 6
+All authentication controls must be enforced on a trusted system (e.g., The server)
+
+SCP-AP-003 | Authentication and Password Management | Page 6
+Establish and utilize standard, tested, authentication services whenever possible
+
+SCP-AP-004 | Authentication and Password Management | Page 6
+Use a centralized implementation for all authentication controls, including libraries that call external authentication services
+
+SCP-AP-005 | Authentication and Password Management | Page 6
+Segregate authentication logic from the resource being requested and use redirection to and from the centralized authentication control
+
+SCP-AP-006 | Authentication and Password Management | Page 6
+All authentication controls should fail securely
+
+SCP-AP-007 | Authentication and Password Management | Page 6
+All administrative and account management functions must be at least as secure as the primary authentication mechanism
+
+SCP-AP-008 | Authentication and Password Management | Page 6
+If your application manages a credential store, it should ensure that only cryptographically strong one-way salted hashes of passwords are stored and that the table/file that stores the passwords and keys is write-able only by the application. (Do not use the MD5 algorithm if it can be avoided)
+
+SCP-AP-009 | Authentication and Password Management | Page 6
+Password hashing must be implemented on a trusted system (e.g., The server).
+
+SCP-AP-010 | Authentication and Password Management | Page 6
+Validate the authentication data only on completion of all data input, especially for sequential authentication implementations
+
+SCP-AP-011 | Authentication and Password Management | Page 6
+Authentication failure responses should not indicate which part of the authentication data was incorrect. For example, instead of "Invalid username" or "Invalid password", just use "Invalid username and/or password" for both. Error responses must be truly identical in both display and source code
+
+SCP-AP-012 | Authentication and Password Management | Page 6
+Utilize authentication for connections to external systems that involve sensitive information or functions
+
+SCP-AP-013 | Authentication and Password Management | Page 6
+Authentication credentials for accessing services external to the application should be encrypted and stored in a protected location on a trusted system (e.g., The server). The source code is NOT a secure location
+
+SCP-AP-014 | Authentication and Password Management | Page 6
+Use only HTTP POST requests to transmit authentication credentials
+
+SCP-AP-015 | Authentication and Password Management | Page 6
+Only send non-temporary passwords over an encrypted connection or as encrypted data, such as in an encrypted email. Temporary passwords associated with email resets may be an exception
+
+SCP-AP-016 | Authentication and Password Management | Page 6
+Enforce password complexity requirements established by policy or regulation. Authentication credentials should be sufficient to withstand attacks that are typical of the threats in the deployed environment. (e.g., requiring the use of alphabetic as well as numeric and/or special characters)
+
+SCP-AP-017 | Authentication and Password Management | Page 6
+Enforce password length requirements established by policy or regulation. Eight characters is commonly used, but 16 is better or consider the use of multi-word pass phrases
+
+SCP-AP-018 | Authentication and Password Management | Page 6
+Password entry should be obscured on the user's screen. (e.g., on web forms use the input type "password")
+
+SCP-AP-019 | Authentication and Password Management | Page 6
+Enforce account disabling after an established number of invalid login attempts (e.g., five attempts is common). The account must be disabled for a period of time sufficient to discourage brute force guessing of credentials, but not so long as to allow for a denial-of-service attack to be performed
+
+SCP-AP-020 | Authentication and Password Management | Page 6
+Password reset and changing operations require the same level of controls as account creation and authentication.
+
+SCP-AP-021 | Authentication and Password Management | Page 6
+Password reset questions should support sufficiently random answers. (e.g., "favorite book" is a bad question because “The Bible” is a very common answer)
+
+SCP-AP-022 | Authentication and Password Management | Page 6
+If using email based resets, only send email to a pre-registered address with a temporary link/password
+
+SCP-AP-023 | Authentication and Password Management | Page 6
+Temporary passwords and links should have a short expiration time
+
+SCP-AP-024 | Authentication and Password Management | Page 7
+Enforce the changing of temporary passwords on the next use
+
+SCP-AP-025 | Authentication and Password Management | Page 7
+Notify users when a password reset occurs
+
+SCP-AP-026 | Authentication and Password Management | Page 7
+Prevent password re-use
+
+SCP-AP-027 | Authentication and Password Management | Page 7
+Passwords should be at least one day old before they can be changed, to prevent attacks on password re-use
+
+SCP-AP-028 | Authentication and Password Management | Page 7
+Enforce password changes based on requirements established in policy or regulation. Critical systems may require more frequent changes. The time between resets must be administratively controlled
+
+SCP-AP-029 | Authentication and Password Management | Page 7
+Disable "remember me" functionality for password fields
+
+SCP-AP-030 | Authentication and Password Management | Page 7
+The last use (successful or unsuccessful) of a user account should be reported to the user at their next successful login
+
+SCP-AP-031 | Authentication and Password Management | Page 7
+Implement monitoring to identify attacks against multiple user accounts, utilizing the same password. This attack pattern is used to bypass standard lockouts, when user IDs can be harvested or guessed
+
+SCP-AP-032 | Authentication and Password Management | Page 7
+Change all vendor-supplied default passwords and user IDs or disable the associated accounts
+
+SCP-AP-033 | Authentication and Password Management | Page 7
+Re-authenticate users prior to performing critical operations
+
+SCP-AP-034 | Authentication and Password Management | Page 7
+Use Multi-Factor Authentication for highly sensitive or high value transactional accounts
+
+SCP-AP-035 | Authentication and Password Management | Page 7
+If using third party code for authentication, inspect the code carefully to ensure it is not affected by any malicious code
+
+SCP-SM-001 | Session Management | Page 7
+Use the server or framework’s session management controls. The application should only recognize these session identifiers as valid
+
+SCP-SM-002 | Session Management | Page 7
+Session identifier creation must always be done on a trusted system (e.g., The server)
+
+SCP-SM-003 | Session Management | Page 7
+Session management controls should use well vetted algorithms that ensure sufficiently random session identifiers
+
+SCP-SM-004 | Session Management | Page 7
+Set the domain and path for cookies containing authenticated session identifiers to an appropriately restricted value for the site
+
+SCP-SM-005 | Session Management | Page 7
+Logout functionality should fully terminate the associated session or connection
+
+SCP-SM-006 | Session Management | Page 7
+Logout functionality should be available from all pages protected by authorization
+
+SCP-SM-007 | Session Management | Page 7
+Establish a session inactivity timeout that is as short as possible, based on balancing risk and business functional requirements. In most cases it should be no more than several hours
+
+SCP-SM-008 | Session Management | Page 7
+Disallow persistent logins and enforce periodic session terminations, even when the session is active. Especially for applications supporting rich network connections or connecting to critical systems. Termination times should support business requirements and the user should receive sufficient notification to mitigate negative impacts
+
+SCP-SM-009 | Session Management | Page 7
+If a session was established before login, close that session and establish a new session after a successful login
+
+SCP-SM-010 | Session Management | Page 7
+Generate a new session identifier on any re-authentication
+
+SCP-SM-011 | Session Management | Page 7
+Do not allow concurrent logins with the same user ID
+
+SCP-SM-012 | Session Management | Page 7
+Do not expose session identifiers in URLs, error messages or logs. Session identifiers should only be located in the HTTP cookie header. For example, do not pass session identifiers as GET parameters
+
+SCP-SM-013 | Session Management | Page 7
+Protect server side session data from unauthorized access, by other users of the server, by implementing appropriate access controls on the server
+
+SCP-SM-014 | Session Management | Page 7
+Generate a new session identifier and deactivate the old one periodically. (This can mitigate certain session hijacking scenarios where the original identifier was compromised)
+
+SCP-SM-015 | Session Management | Page 8
+Generate a new session identifier if the connection security changes from HTTP to HTTPS, as can occur during authentication. Within an application, it is recommended to consistently utilize HTTPS rather than switching between HTTP to HTTPS.
+
+SCP-SM-016 | Session Management | Page 8
+Supplement standard session management for sensitive server-side operations, like account manage- ment, by utilizing per-session strong random tokens or parameters. This method can be used to prevent Cross Site Request Forgery attacks
+
+SCP-SM-017 | Session Management | Page 8
+Supplement standard session management for highly sensitive or critical operations by utilizing per-request, as opposed to per-session, strong random tokens or parameters
+
+SCP-SM-018 | Session Management | Page 8
+Set the "secure" attribute for cookies transmitted over an TLS connection
+
+SCP-SM-019 | Session Management | Page 8
+Set cookies with the HttpOnly attribute, unless you specifically require client-side scripts within your application to read or set a cookie's value
+
+SCP-AC-001 | Access Control | Page 8
+Use only trusted system objects, e.g. server side session objects, for making access authorization decisions
+
+SCP-AC-002 | Access Control | Page 8
+Use a single site-wide component to check access authorization. This includes libraries that call external authorization services
+
+SCP-AC-003 | Access Control | Page 8
+Access controls should fail securely
+
+SCP-AC-004 | Access Control | Page 8
+Deny all access if the application cannot access its security configuration information
+
+SCP-AC-005 | Access Control | Page 8
+Enforce authorization controls on every request, including those made by server side scripts, "includes" and requests from rich client-side technologies like AJAX and Flash
+
+SCP-AC-006 | Access Control | Page 8
+Segregate privileged logic from other application code
+
+SCP-AC-007 | Access Control | Page 8
+Restrict access to files or other resources, including those outside the application's direct control, to only authorized users
+
+SCP-AC-008 | Access Control | Page 8
+Restrict access to protected URLs to only authorized users
+
+SCP-AC-009 | Access Control | Page 8
+Restrict access to protected functions to only authorized users
+
+SCP-AC-010 | Access Control | Page 8
+Restrict direct object references to only authorized users
+
+SCP-AC-011 | Access Control | Page 8
+Restrict access to services to only authorized users
+
+SCP-AC-012 | Access Control | Page 8
+Restrict access to application data to only authorized users
+
+SCP-AC-013 | Access Control | Page 8
+Restrict access to user and data attributes and policy information used by access controls
+
+SCP-AC-014 | Access Control | Page 8
+Restrict access security-relevant configuration information to only authorized users
+
+SCP-AC-015 | Access Control | Page 8
+Server side implementation and presentation layer representations of access control rules must match
+
+SCP-AC-016 | Access Control | Page 8
+If state data must be stored on the client, use encryption and integrity checking on the server side to catch state tampering.
+
+SCP-AC-017 | Access Control | Page 8
+Enforce application logic flows to comply with business rules
+
+SCP-AC-018 | Access Control | Page 8
+Limit the number of transactions a single user or device can perform in a given period of time. The transactions/time should be above the actual business requirement, but low enough to deter automated attacks
+
+SCP-AC-019 | Access Control | Page 8
+Use the "referer" header as a supplemental check only, it should never be the sole authorization check, as it is can be spoofed
+
+SCP-AC-020 | Access Control | Page 8
+If long authenticated sessions are allowed, periodically re-validate a user’s authorization to ensure that their privileges have not changed and if they have, log the user out and force them to re-authenticate
+
+SCP-AC-021 | Access Control | Page 8
+Implement account auditing and enforce the disabling of unused accounts (e.g., After no more than 30 days from the expiration of an account’s password.)
+
+SCP-AC-022 | Access Control | Page 9
+The application must support disabling of accounts and terminating sessions when authorization ceases (e.g., Changes to role, employment status, business process, etc.)
+
+SCP-AC-023 | Access Control | Page 9
+Service accounts or accounts supporting connections to or from external systems should have the least privilege possible
+
+SCP-AC-024 | Access Control | Page 9
+Create an Access Control Policy to document an application's business rules, data types and access authorization criteria and/or processes so that access can be properly provisioned and controlled. This includes identifying access requirements for both the data and system resources
+
+SCP-CP-001 | Cryptographic Practices | Page 9
+All cryptographic functions used to protect secrets from the application user must be implemented on a trusted system (e.g., The server)
+
+SCP-CP-002 | Cryptographic Practices | Page 9
+Protect master secrets from unauthorized access
+
+SCP-CP-003 | Cryptographic Practices | Page 9
+Cryptographic modules should fail securely
+
+SCP-CP-004 | Cryptographic Practices | Page 9
+All random numbers, random file names, random GUIDs, and random strings should be generated using the cryptographic module’s approved random number generator when these random values are intended to be un-guessable
+
+SCP-CP-005 | Cryptographic Practices | Page 9
+Cryptographic modules used by the application should be compliant to FIPS 140-2 or an equivalent standard. (See http://csrc.nist.gov/groups/STM/cmvp/validation.html)
+
+SCP-CP-006 | Cryptographic Practices | Page 9
+Establish and utilize a policy and process for how cryptographic keys will be managed
+
+SCP-EL-001 | Error Handling and Logging | Page 9
+Do not disclose sensitive information in error responses, including system details, session identifiers or account information
+
+SCP-EL-002 | Error Handling and Logging | Page 9
+Use error handlers that do not display debugging or stack trace information
+
+SCP-EL-003 | Error Handling and Logging | Page 9
+Implement generic error messages and use custom error pages
+
+SCP-EL-004 | Error Handling and Logging | Page 9
+The application should handle application errors and not rely on the server configuration
+
+SCP-EL-005 | Error Handling and Logging | Page 9
+Properly free allocated memory when error conditions occur
+
+SCP-EL-006 | Error Handling and Logging | Page 9
+Error handling logic associated with security controls should deny access by default
+
+SCP-EL-007 | Error Handling and Logging | Page 9
+All logging controls should be implemented on a trusted system (e.g., The server)
+
+SCP-EL-008 | Error Handling and Logging | Page 9
+Logging controls should support both success and failure of specified security events
+
+SCP-EL-009 | Error Handling and Logging | Page 9
+Ensure logs contain important log event data
+
+SCP-EL-010 | Error Handling and Logging | Page 9
+Ensure log entries that include un-trusted data will not execute as code in the intended log viewing interface or software
+
+SCP-EL-011 | Error Handling and Logging | Page 9
+Restrict access to logs to only authorized individuals
+
+SCP-EL-012 | Error Handling and Logging | Page 9
+Utilize a master routine for all logging operations
+
+SCP-EL-013 | Error Handling and Logging | Page 9
+Do not store sensitive information in logs, including unnecessary system details, session identifiers or passwords
+
+SCP-EL-014 | Error Handling and Logging | Page 9
+Ensure that a mechanism exists to conduct log analysis
+
+SCP-EL-015 | Error Handling and Logging | Page 9
+Log all input validation failures
+
+SCP-EL-016 | Error Handling and Logging | Page 9
+Log all authentication attempts, especially failures
+
+SCP-EL-017 | Error Handling and Logging | Page 9
+Log all access control failures
+
+SCP-EL-018 | Error Handling and Logging | Page 9
+Log all apparent tampering events, including unexpected changes to state data
+
+SCP-EL-019 | Error Handling and Logging | Page 10
+Log attempts to connect with invalid or expired session tokens
+
+SCP-EL-020 | Error Handling and Logging | Page 10
+Log all system exceptions
+
+SCP-EL-021 | Error Handling and Logging | Page 10
+Log all administrative functions, including changes to the security configuration settings
+
+SCP-EL-022 | Error Handling and Logging | Page 10
+Log all backend TLS connection failures
+
+SCP-EL-023 | Error Handling and Logging | Page 10
+Log cryptographic module failures
+
+SCP-EL-024 | Error Handling and Logging | Page 10
+Use a cryptographic hash function to validate log entry integrity
+
+SCP-DP-001 | Data Protection | Page 10
+Implement least privilege, restrict users to only the functionality, data and system information that is required to perform their tasks
+
+SCP-DP-002 | Data Protection | Page 10
+Protect all cached or temporary copies of sensitive data stored on the server from unauthorized access and purge those temporary working files a soon as they are no longer required.
+
+SCP-DP-003 | Data Protection | Page 10
+Encrypt highly sensitive stored information, like authentication verification data, even on the server side. Always use well vetted algorithms, see "Cryptographic Practices" for additional guidance
+
+SCP-DP-004 | Data Protection | Page 10
+Protect server-side source-code from being downloaded by a user
+
+SCP-DP-005 | Data Protection | Page 10
+Do not store passwords, connection strings or other sensitive information in clear text or in any non-cryptographically secure manner on the client side. This includes embedding in insecure formats like: MS viewstate, Adobe flash or compiled code
+
+SCP-DP-006 | Data Protection | Page 10
+Remove comments in user accessible production code that may reveal backend system or other sensitive information
+
+SCP-DP-007 | Data Protection | Page 10
+Remove unnecessary application and system documentation as this can reveal useful information to attackers
+
+SCP-DP-008 | Data Protection | Page 10
+Do not include sensitive information in HTTP GET request parameters
+
+SCP-DP-009 | Data Protection | Page 10
+Disable auto complete features on forms expected to contain sensitive information, including authen- tication
+
+SCP-DP-010 | Data Protection | Page 10
+Disable client side caching on pages containing sensitive information. Cache-Control: no-store, may be used in conjunction with the HTTP header control "Pragma: no-cache", which is less effective, but is HTTP/1.0 backward compatible
+
+SCP-DP-011 | Data Protection | Page 10
+The application should support the removal of sensitive data when that data is no longer required. (e.g. personal information or certain financial data)
+
+SCP-DP-012 | Data Protection | Page 10
+Implement appropriate access controls for sensitive data stored on the server. This includes cached data, temporary files and data that should be accessible only by specific system users
+
+SCP-CS-001 | Communication Security | Page 10
+Implement encryption for the transmission of all sensitive information. This should include TLS for protecting the connection and may be supplemented by discrete encryption of sensitive files or non-HTTP based connections
+
+SCP-CS-002 | Communication Security | Page 10
+TLS certificates should be valid and have the correct domain name, not be expired, and be installed with intermediate certificates when required
+
+SCP-CS-003 | Communication Security | Page 10
+Failed TLS connections should not fall back to an insecure connection
+
+SCP-CS-004 | Communication Security | Page 10
+Utilize TLS connections for all content requiring authenticated access and for all other sensitive information
+
+SCP-CS-005 | Communication Security | Page 10
+Utilize TLS for connections to external systems that involve sensitive information or functions
+
+SCP-CS-006 | Communication Security | Page 10
+Utilize a single standard TLS implementation that is configured appropriately
+
+SCP-CS-007 | Communication Security | Page 11
+Specify character encodings for all connections
+
+SCP-CS-008 | Communication Security | Page 11
+Filter parameters containing sensitive information from the HTTP referer, when linking to external sites
+
+SCP-SC-001 | System Configuration | Page 11
+Ensure servers, frameworks and system components are running the latest approved version
+
+SCP-SC-002 | System Configuration | Page 11
+Ensure servers, frameworks and system components have all patches issued for the version in use
+
+SCP-SC-003 | System Configuration | Page 11
+Turn off directory listings
+
+SCP-SC-004 | System Configuration | Page 11
+Restrict the web server, process and service accounts to the least privileges possible
+
+SCP-SC-005 | System Configuration | Page 11
+When exceptions occur, fail securely
+
+SCP-SC-006 | System Configuration | Page 11
+Remove all unnecessary functionality and files
+
+SCP-SC-007 | System Configuration | Page 11
+Remove test code or any functionality not intended for production, prior to deployment
+
+SCP-SC-008 | System Configuration | Page 11
+Prevent disclosure of your directory structure in the robots.txt file by placing directories not intended for public indexing into an isolated parent directory. Then "Disallow" that entire parent directory in the robots.txt file rather than Disallowing each individual directory
+
+SCP-SC-009 | System Configuration | Page 11
+Define which HTTP methods, Get or Post, the application will support and whether it will be handled differently in different pages in the application
+
+SCP-SC-010 | System Configuration | Page 11
+Disable unnecessary HTTP methods, such as WebDAV extensions. If an extended HTTP method that supports file handling is required, utilize a well-vetted authentication mechanism
+
+SCP-SC-011 | System Configuration | Page 11
+If the web server handles both HTTP 1.0 and 1.1, ensure that both are configured in a similar manor or insure that you understand any difference that may exist (e.g. handling of extended HTTP methods)
+
+SCP-SC-012 | System Configuration | Page 11
+Remove unnecessary information from HTTP response headers related to the OS, web-server version and application frameworks
+
+SCP-SC-013 | System Configuration | Page 11
+The security configuration store for the application should be able to be output in human readable form to support auditing
+
+SCP-SC-014 | System Configuration | Page 11
+Implement an asset management system and register system components and software in it
+
+SCP-SC-015 | System Configuration | Page 11
+Isolate development environments from the production network and provide access only to authorized development and test groups. Development environments are often configured less securely than production environments and attackers may use this difference to discover shared weaknesses or as an avenue for exploitation
+
+SCP-SC-016 | System Configuration | Page 11
+Implement a software change control system to manage and record changes to the code both in development and production
+
+SCP-DB-001 | Database Security | Page 11
+Use strongly typed parameterized queries
+
+SCP-DB-002 | Database Security | Page 11
+Utilize input validation and output encoding and be sure to address meta characters. If these fail, do not run the database command
+
+SCP-DB-003 | Database Security | Page 11
+Ensure that variables are strongly typed
+
+SCP-DB-004 | Database Security | Page 11
+The application should use the lowest possible level of privilege when accessing the database
+
+SCP-DB-005 | Database Security | Page 11
+Use secure credentials for database access
+
+SCP-DB-006 | Database Security | Page 11
+Connection strings should not be hard coded within the application. Connection strings should be stored in a separate configuration file on a trusted system and they should be encrypted.
+
+SCP-DB-007 | Database Security | Page 12
+Use stored procedures to abstract data access and allow for the removal of permissions to the base tables in the database
+
+SCP-DB-008 | Database Security | Page 12
+Close the connection as soon as possible
+
+SCP-DB-009 | Database Security | Page 12
+Remove or change all default database administrative passwords. Utilize strong passwords/phrases or implement multi-factor authentication
+
+SCP-DB-010 | Database Security | Page 12
+Turn off all unnecessary database functionality (e.g., unnecessary stored procedures or services, utility packages, install only the minimum set of features and options required (surface area reduction))
+
+SCP-DB-011 | Database Security | Page 12
+Remove unnecessary default vendor content (e.g., sample schemas)
+
+SCP-DB-012 | Database Security | Page 12
+Disable any default accounts that are not required to support business requirements
+
+SCP-DB-013 | Database Security | Page 12
+The application should connect to the database with different credentials for every trust distinction (e.g., user, read-only user, guest, administrators)
+
+SCP-FM-001 | File Management | Page 12
+Do not pass user supplied data directly to any dynamic include function
+
+SCP-FM-002 | File Management | Page 12
+Require authentication before allowing a file to be uploaded
+
+SCP-FM-003 | File Management | Page 12
+Limit the type of files that can be uploaded to only those types that are needed for business purposes
+
+SCP-FM-004 | File Management | Page 12
+Validate uploaded files are the expected type by checking file headers. Checking for file type by extension alone is not sufficient
+
+SCP-FM-005 | File Management | Page 12
+Do not save files in the same web context as the application. Files should either go to the content server or in the database.
+
+SCP-FM-006 | File Management | Page 12
+Prevent or restrict the uploading of any file that may be interpreted by the web server.
+
+SCP-FM-007 | File Management | Page 12
+Turn off execution privileges on file upload directories
+
+SCP-FM-008 | File Management | Page 12
+Implement safe uploading in UNIX by mounting the targeted file directory as a logical drive using the associated path or the chrooted environment
+
+SCP-FM-009 | File Management | Page 12
+When referencing existing files, use a white list of allowed file names and types. Validate the value of the parameter being passed and if it does not match one of the expected values, either reject it or use a hard coded default file value for the content instead
+
+SCP-FM-010 | File Management | Page 12
+Do not pass user supplied data into a dynamic redirect. If this must be allowed, then the redirect should accept only validated, relative path URLs
+
+SCP-FM-011 | File Management | Page 12
+Do not pass directory or file paths, use index values mapped to pre-defined list of paths
+
+SCP-FM-012 | File Management | Page 12
+Never send the absolute file path to the client
+
+SCP-FM-013 | File Management | Page 12
+Ensure application files and resources are read-only
+
+SCP-FM-014 | File Management | Page 12
+Scan user uploaded files for viruses and malware
+
+SCP-MM-001 | Memory Management | Page 12
+Utilize input and output control for un-trusted data
+
+SCP-MM-002 | Memory Management | Page 12
+Double check that the buffer is as large as specified
+
+SCP-MM-003 | Memory Management | Page 12
+When using functions that accept a number of bytes to copy, such as strncpy(), be aware that if the destination buffer size is equal to the source buffer size, it may not NULL-terminate the string
+
+SCP-MM-004 | Memory Management | Page 12
+Check buffer boundaries if calling the function in a loop and make sure there is no danger of writing past the allocated space
+
+SCP-MM-005 | Memory Management | Page 12
+Truncate all input strings to a reasonable length before passing them to the copy and concatenation functions
+
+SCP-MM-006 | Memory Management | Page 13
+Specifically close resources, don’t rely on garbage collection. (e.g., connection objects, file handles, etc.)
+
+SCP-MM-007 | Memory Management | Page 13
+Use non-executable stacks when available
+
+SCP-MM-008 | Memory Management | Page 13
+Avoid the use of known vulnerable functions (e.g., printf, strcat, strcpy etc.)
+
+SCP-MM-009 | Memory Management | Page 13
+Properly free allocated memory upon the completion of functions and at all exit points
+
+SCP-GC-001 | General Coding Practices | Page 13
+Use tested and approved managed code rather than creating new unmanaged code for common tasks
+
+SCP-GC-002 | General Coding Practices | Page 13
+Utilize task specific built-in APIs to conduct operating system tasks. Do not allow the application to issue commands directly to the Operating System, especially through the use of application initiated command shells
+
+SCP-GC-003 | General Coding Practices | Page 13
+Use checksums or hashes to verify the integrity of interpreted code, libraries, executables, and configuration files
+
+SCP-GC-004 | General Coding Practices | Page 13
+Utilize locking to prevent multiple simultaneous requests or use a synchronization mechanism to prevent race conditions
+
+SCP-GC-005 | General Coding Practices | Page 13
+Protect shared variables and resources from inappropriate concurrent access
+
+SCP-GC-006 | General Coding Practices | Page 13
+Explicitly initialize all your variables and other data stores, either during declaration or just before the first usage
+
+SCP-GC-007 | General Coding Practices | Page 13
+In cases where the application must run with elevated privileges, raise privileges as late as possible, and drop them as soon as possible
+
+SCP-GC-008 | General Coding Practices | Page 13
+Avoid calculation errors by understanding your programming language's underlying representation and how it interacts with numeric calculation. Pay close attention to byte size discrepancies, precision, signed/unsigned distinctions, truncation, conversion and casting between types, "not-a- number" calculations, and how your language handles numbers that are too large or too small for its underlying representation
+
+SCP-GC-009 | General Coding Practices | Page 13
+Do not pass user supplied data to any dynamic execution function
+
+SCP-GC-010 | General Coding Practices | Page 13
+Restrict users from generating new code or altering existing code
+
+SCP-GC-011 | General Coding Practices | Page 13
+Review all secondary applications, third party code and libraries to determine business necessity and validate safe functionality, as these can introduce new vulnerabilities
+
+SCP-GC-012 | General Coding Practices | Page 13
+Implement safe updating. If the application will utilize automatic updates, then use cryptographic signatures for your code and ensure your download clients verify those signatures. Use encrypted channels to transfer the code from the host server
+
